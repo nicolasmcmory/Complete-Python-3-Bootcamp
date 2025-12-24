@@ -1,9 +1,10 @@
 def func():
-    print("func() ran in one.py")
+    print("FUNC() IN ONE.PY")
 
-print("top-level print inside of one.py")
 
-if __name__ == "__main__":
-    print("one.py is being run directly")
+print("TOP LEVEL IN ONE.PY")
+
+if __name__ == '__main__':
+    print('ONE.PY is being run directly.')
 else:
-    print("one.py is being imported into another module")
+    print('ONE.PY HAS BEEN IMPORTED.')
