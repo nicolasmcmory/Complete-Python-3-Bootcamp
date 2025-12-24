@@ -1,14 +1,7 @@
-"""
-A very simple script.
-"""
+""" Const """
+A = 1
+B = 2
 
-def myfunc():
-    """
-    An extremely simple function.
-    """
-    first = 1
-    second = 2
-    print(first)
-    print(second)
-
-myfunc()
+# Log to console
+print(A)
+print(B)
