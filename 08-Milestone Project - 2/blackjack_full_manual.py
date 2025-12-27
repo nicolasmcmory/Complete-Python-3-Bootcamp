@@ -30,76 +30,124 @@ class Card:
         return f"{self.rank} of {self.suit}"
 
 
-# %% Deck class
-class Deck:
-    def __init__(self):
-        """Deck has cards as instance variables and build_deck(), shuffle(), len() as instance methods."""
-        self.cards = []
-        self.build_deck()
-        self.shuffle()
-
-    def build_deck(self):
-        suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
-        ranks = [
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "Jack",
-            "Queen",
-            "King",
-            "Ace",
-        ]
-        # Build deck
-        for suit in suits:
-            for rank in ranks:
-                card = Card(suit, rank)
-                self.cards.append(card)
-
-    def shuffle(self):
-        random.shuffle(self.cards)
-        return True
-
-    def __len__(self):
-        return len(self.cards)
-
-    def __str__(self):
-        deck_str = f"{len(self.cards)} cards in deck:\n"
-        deck_str += "\n".join([f"{card}" for card in self.cards])
-        return deck_str
-
-
-# %% Deck class
 class Player:
-    def __init__(self, name: str, cash: int = 1000):
+    def __init__(self, name: str = "Player", cash: int = 1000):
+        """Player has a name as 'name' (defaults to 'Player'), cards in hand as 'hand', cash in hand as 'cash', current bet on table as 'bet'."""
         self.name = name
-        self.cards = []
+        self.hand = []
         self.cash = cash
         self.bet = 0
-        self.hit()
-        self.stand()
-        self.win()
-        self.loose()
-        self.tie()
+
+    def receive_card(self, card):
+        """Receive 1 card in hand."""
+        self.hand.append(card)
+
+    def __return_cards(self) -> list:
+        """Return player cards, emptying hand."""
+        cards = []
+        while self.hand:
+            cards.append(self.hand.pop())
+        return cards
+
+    def place_bet(self, bet):
+        """Place bet as long as funds are sufficient."""
+        if bet <= self.cash:
+            self.bet = bet
+            return True
+        return False
+
+    def win(self, winnings: int):
+        """Winning implies that player receives their bet with matched bet from other players including the dealer and clears player's bet. Empties hand and returns cards from the hand."""
+        self.cash += winnings
+        self.bet = 0
+        return self.__return_cards()
+
+    def loose(self):
+        """Loosing implies removing the bet from the players cash. Empties hand and returns cards from the hand."""
+        self.cash -= self.bet
+        return self.__return_cards()
+
+    def tie(self):
+        """Tie implies the player returns their cards and the bet is reset. No other changes."""
+        self.bet = 0
+        return self.__return_cards()
 
 
 class Dealer(Player):
+
+    class Deck:
+        def __init__(self):
+            """Deck has cards as instance variables and build_deck(), shuffle(), len() as instance methods."""
+            self.cards = []
+            self.build_deck()
+            self.shuffle()
+
+        def build_deck(self):
+            suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
+            ranks = [
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "Jack",
+                "Queen",
+                "King",
+                "Ace",
+            ]
+            # Build deck
+            for suit in suits:
+                for rank in ranks:
+                    card = Card(suit, rank)
+                    self.cards.append(card)
+
+        def shuffle(self):
+            random.shuffle(self.cards)
+            return True
+
+        def remove_card(self):
+            return self.cards.pop()
+
+        def add_cards(self, cards) -> list:
+            """Accepts lists of cards and individual cards as long as they are cards"""
+            try:
+                # List of cards
+                if type(cards) == list and type(cards[0]) == Card:
+                    return self.cards.extend(cards)
+
+                # Individual card
+                if type(cards) == Card:
+                    return self.cards.append(cards)
+
+            except Exception as e:
+                print(e)
+
+        def __len__(self):
+            return len(self.cards)
+
+        def __str__(self):
+            deck_str = f"{len(self.cards)} cards in deck:\n"
+            deck_str += "\n".join([f"{card}" for card in self.cards])
+            return deck_str
+
     def __init__(self):
         super().__init__("Dealer")
-        self.deck = self.new_deck()
+        self.deck = Dealer.new_deck()
+
+    @staticmethod
+    def new_deck():
+        """Instantiates a new deck."""
+        deck = Dealer.Deck()
+        print(deck)
+        return Dealer.Deck()
 
     def deal(self):
-        pass
-
-    def new_deck():
-        deck = Deck()
-        print(deck)
-        return Deck()
+        """Hands out a card from deck."""
+        return self.deck.remove_card()
 
 
 class Game:
