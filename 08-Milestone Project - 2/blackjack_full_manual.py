@@ -1,35 +1,6 @@
 import random
 
 
-class Card:
-    def __init__(self, suit, rank):
-        """Card has suit, rank and value instance variables."""
-        self.suit = suit
-        self.rank = rank
-        self.value = self.assign_value(rank)
-
-    def assign_value(self, rank):
-        values_by_rank = {
-            "2": 2,
-            "3": 3,
-            "4": 4,
-            "5": 5,
-            "6": 6,
-            "7": 7,
-            "8": 8,
-            "9": 9,
-            "10": 10,
-            "Jack": 10,
-            "Queen": 10,
-            "King": 10,
-            "Ace": 11,
-        }
-        return values_by_rank[rank]
-
-    def __str__(self):
-        return f"{self.rank} of {self.suit}"
-
-
 class Player:
     def __init__(self, name: str = "Player", cash: int = 1000):
         """Player has a name as 'name' (defaults to 'Player'), cards in hand as 'hand', cash in hand as 'cash', current bet on table as 'bet'."""
@@ -76,6 +47,36 @@ class Player:
 class Dealer(Player):
 
     class Deck:
+
+        class Card:
+            def __init__(self, suit, rank):
+                """Card has suit, rank and value instance variables."""
+                self.suit = suit
+                self.rank = rank
+                self.value = self.assign_value(rank)
+
+            def assign_value(self, rank):
+                """Assigns value to a card based on common values for blackjack."""
+                values_by_rank = {
+                    "2": 2,
+                    "3": 3,
+                    "4": 4,
+                    "5": 5,
+                    "6": 6,
+                    "7": 7,
+                    "8": 8,
+                    "9": 9,
+                    "10": 10,
+                    "Jack": 10,
+                    "Queen": 10,
+                    "King": 10,
+                    "Ace": 11,
+                }
+                return values_by_rank[rank]
+
+            def __str__(self):
+                return f"{self.rank} of {self.suit}"
+
         def __init__(self):
             """Deck has cards as instance variables and build_deck(), shuffle(), len() as instance methods."""
             self.cards = []
@@ -83,6 +84,7 @@ class Dealer(Player):
             self.shuffle()
 
         def build_deck(self):
+            """Builds a deck from common features."""
             suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
             ranks = [
                 "2",
@@ -102,31 +104,34 @@ class Dealer(Player):
             # Build deck
             for suit in suits:
                 for rank in ranks:
-                    card = Card(suit, rank)
+                    card = Dealer.Deck.Card(suit, rank)
                     self.cards.append(card)
 
         def shuffle(self):
+            """Shuffles deck."""
             random.shuffle(self.cards)
             return True
 
         def remove_card(self):
+            """Removes a card from end of deck (back), deck is face down."""
             return self.cards.pop()
 
         def add_cards(self, cards) -> list:
             """Accepts lists of cards and individual cards as long as they are cards"""
             try:
                 # List of cards
-                if type(cards) == list and type(cards[0]) == Card:
+                if type(cards) == list and type(cards[0]) == Dealer.Deck.Card:
                     return self.cards.extend(cards)
 
                 # Individual card
-                if type(cards) == Card:
+                if type(cards) == Dealer.Deck.Card:
                     return self.cards.append(cards)
 
             except Exception as e:
                 print(e)
 
         def __len__(self):
+            """Returns lenght of deck."""
             return len(self.cards)
 
         def __str__(self):
@@ -149,6 +154,11 @@ class Dealer(Player):
         """Hands out a card from deck."""
         return self.deck.remove_card()
 
+    def return_cards(self, cards):
+        """Dealer takes cards from players and returns them to deck. Returns the deck string dunder."""
+        self.deck.add_cards(cards)
+        return f"{self.deck}"
+
 
 class Game:
     def __init__(self, player_name):
@@ -159,12 +169,12 @@ class Game:
         """First handout of cards at game start, after win, tie or loose."""
         pass
 
-    def handle_deal(self):
-        """Handle deal"""
-
     def compare_hands(self):
         """Check for bust (over 21) win, loose or tie."""
         pass
+
+    def handle_deal(self):
+        """Handle deal"""
 
     def handle_stand(self):
         """Handle logic for player stand move."""
