@@ -157,6 +157,7 @@ class Dealer(Player):
     def return_cards(self, cards):
         """Dealer takes cards from players and returns them to deck. Returns the deck string dunder."""
         self.deck.add_cards(cards)
+        self.deck.shuffle()
         return f"{self.deck}"
 
 
@@ -167,7 +168,7 @@ class Game:
 
     def first_deal(self):
         """First handout of cards at game start, after win, tie or loose."""
-        pass
+        
 
     def compare_hands(self):
         """Check for bust (over 21) win, loose or tie."""
@@ -190,4 +191,5 @@ class Game:
 
     def start_game(self):
         """Start game."""
+        
         self.first_deal()
