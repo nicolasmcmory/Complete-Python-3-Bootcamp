@@ -149,24 +149,31 @@ class Player:
     def win(self, winnings: int) -> list[Deck.Card]:
         """Winning implies that player receives their bet with matched bet from other players including the dealer and clears player's bet. Empties hand and returns cards from the hand."""
         self.cash += winnings
-        print(f"{self.name} wins!")
 
         # Reveal cards
         for card in self.hand:
             card.show_card()
-        print(self)
 
         # Reset bet
         self.bet = 0
+        print(f"{self.name} wins!\n\n")
+        print(self)
 
         return self.__return_cards()
 
     def lose(self) -> list[Deck.Card]:
         """Loosing implies removing the bet from the players cash. Empties hand and returns cards from the hand."""
         self.cash -= self.bet
+
+        # Reveal cards
+        for card in self.hand:
+            card.show_card()
+
+        # Reset bet
         self.bet = 0
-        print(f"{self.name} looses!")
+        print(f"{self.name} looses!\n\n")
         print(self)
+
         return self.__return_cards()
 
     def tie(self) -> list[Deck.Card]:
@@ -292,10 +299,6 @@ class Game:
         player_sum = self.__sum_cards(self.player)
         dealer_sum = self.__sum_cards(self.dealer)
 
-        # Reveal dealers hand
-        print("Dealer's hand: ")
-        for card in self.dealer.hand:
-            card.show_card()
         # Dealer is receiving
         while self.__sum_cards(self.dealer) < 17:
             self.dealer.receive_card(self.dealer.deal())
@@ -345,19 +348,23 @@ class Game:
             # Dealing out the first hand
             if len(self.player.hand) == 0 and len(self.dealer.hand) == 0:
                 self.__first_deal()
+                print("=" * 50)
                 print(self.player)
                 print("=" * 50)
                 print(self.dealer)
 
             # Player's move
-            hit_or_stand = input(" Hit (h) or Stand (s)?: ")
+            hit_or_stand = input("Hit (h) or Stand (s)?: ")
+            print("=" * 50)
             if hit_or_stand == "h":
                 self.__handle_hit()
+                print("=" * 50)
                 print(self.player)
                 print("=" * 50)
                 print(self.dealer)
             elif hit_or_stand == "s":
                 self.__handle_stand()
+                print("=" * 50)
                 print(self.player)
                 print("=" * 50)
                 print(self.dealer)
